@@ -1,11 +1,4 @@
-// ======================
-// CONSTANTS & PRESETS
-// ======================
-const PK = {
-  ER: { peak1Time: 2, peak2Time: 6, halfLife: 3, peak1Ratio: 1.2, peak2Ratio: 0.8 },
-  IR: { peakTime: 1.5, halfLife: 2.5, peakRatio: 1.5 }
-};
-
+// ========== CONSTANTS ==========
 const METABOLISM_PRESETS = {
   slow: {
     ER: { peak1Time: 2.5, peak2Time: 7, halfLife: 4 },
@@ -21,38 +14,55 @@ const METABOLISM_PRESETS = {
   }
 };
 
-// ======================
-// APP STATE
-// ======================
+const PK = {
+  ER: { ...METABOLISM_PRESETS.medium.ER, peak1Ratio: 1.2, peak2Ratio: 0.8 },
+  IR: { ...METABOLISM_PRESETS.medium.IR, peakRatio: 1.5 }
+};
+
+// ========== STATE ==========
 let doses = [];
 let nextId = 1;
 
-// ======================
-// DOM ELEMENTS
-// ======================
+// ========== DOM ELEMENTS ==========
 const chartCtx = document.getElementById('ritalinChart').getContext('2d');
-const addDoseBtn = document.getElementById('addDoseBtn');
 const metabolismSelect = document.getElementById('metabolismSpeed');
 const pkParamsDisplay = document.getElementById('pkParamsDisplay');
+const addDoseBtn = document.getElementById('addDoseBtn');
 
-// ======================
-// CHART INITIALIZATION
-// ======================
+// ========== CHART INIT ==========
 const chart = new Chart(chartCtx, {
   type: 'line',
   data: { labels: [], datasets: [] },
   options: {
     responsive: true,
     maintainAspectRatio: false,
+    animation: {
+      duration: 300
+    },
     scales: {
       x: { 
-        title: { display: true, text: 'Time (hours)' },
-        ticks: { autoSkip: true, maxRotation: 0 }
+        title: { 
+          display: true, 
+          text: 'Time (hours)',
+          font: { weight: 'bold' }
+        },
+        ticks: { 
+          autoSkip: true,
+          maxRotation: 0
+        }
       },
       y: { 
-        title: { display: true, text: 'Concentration (ng/mL)' }, 
+        title: { 
+          display: true, 
+          text: 'Concentration (ng/mL)',
+          font: { weight: 'bold' }
+        },
         min: 0,
-        suggestedMax: 30 // Adjust based on your typical dose range
+        ticks: {
+          callback: function(value) {
+            return value.toFixed(1);
+          }
+        }
       }
     },
     plugins: {
@@ -60,33 +70,25 @@ const chart = new Chart(chartCtx, {
         position: 'top',
         labels: {
           boxWidth: 12,
-          font: {
-            size: 12
-          }
+          font: { size: 12 },
+          padding: 20
         }
       },
       tooltip: {
         callbacks: {
-          label: (context) => `${context.dataset.label}: ${context.parsed.y.toFixed(1)} ng/mL`
+          label: (context) => 
+            `${context.dataset.label}: ${context.parsed.y.toFixed(2)} ng/mL`
         }
       }
-    },
-    interaction: {
-      mode: 'nearest',
-      intersect: false
     }
   }
 });
 
-// ======================
-// EVENT LISTENERS
-// ======================
-addDoseBtn.addEventListener('click', addNewDose);
+// ========== EVENT LISTENERS ==========
 metabolismSelect.addEventListener('change', updateMetabolism);
+addDoseBtn.addEventListener('click', addNewDose);
 
-// ======================
-// CORE FUNCTIONS
-// ======================
+// ========== CORE FUNCTIONS ==========
 function calculateDose(dose, timePoints) {
   if (dose.type === "ER") {
     return timePoints.map(t => {
@@ -127,7 +129,7 @@ function updateChart() {
   doses.forEach((dose) => {
     const doseData = calculateDose(dose, timePoints);
     datasets.push({
-      label: `${dose.type} ${dose.amount}mg at ${dose.time}h`,
+      label: `${dose.type} ${dose.amount}mg @ ${dose.time}h`,
       data: doseData,
       borderColor: dose.color,
       borderWidth: 2,
@@ -141,9 +143,9 @@ function updateChart() {
   datasets.unshift({
     label: 'Total Concentration',
     data: totalConcentration,
-    borderColor: '#36A2EB',
+    borderColor: '#2c3e50',
+    backgroundColor: 'rgba(44, 62, 80, 0.1)',
     borderWidth: 3,
-    backgroundColor: 'rgba(54, 162, 235, 0.1)',
     tension: 0.2,
     fill: true
   });
@@ -157,18 +159,42 @@ function renderDosesList() {
   const tableBody = document.getElementById('dosesList');
   tableBody.innerHTML = doses.map(dose => `
     <tr data-id="${dose.id}">
-      <td class="dose-type">
+      <td>
         <select class="edit-type" onchange="handleDoseUpdate(${dose.id})">
           <option value="ER" ${dose.type === 'ER' ? 'selected' : ''}>ER</option>
           <option value="IR" ${dose.type === 'IR' ? 'selected' : ''}>IR</option>
         </select>
       </td>
-      <td><input type="number" class="edit-time" value="${dose.time}" step="0.25" min="0" onchange="handleDoseUpdate(${dose.id})"></td>
-      <td><input type="number" class="edit-amount" value="${dose.amount}" min="0.1" step="0.1" onchange="handleDoseUpdate(${dose.id})"></td>
-      <td><input type="color" class="edit-color" value="${dose.color}" onchange="handleDoseUpdate(${dose.id})"></td>
-      <td class="actions"><button onclick="deleteDose(${dose.id})">Delete</button></td>
+      <td>
+        <input type="number" class="edit-time" value="${dose.time}" step="0.25" min="0" 
+               onchange="handleDoseUpdate(${dose.id})">
+      </td>
+      <td>
+        <input type="number" class="edit-amount" value="${dose.amount}" min="0.1" step="0.1"
+               onchange="handleDoseUpdate(${dose.id})">
+      </td>
+      <td>
+        <input type="color" class="edit-color" value="${dose.color}" 
+               onchange="handleDoseUpdate(${dose.id})">
+      </td>
+      <td>
+        <button class="delete-btn" onclick="deleteDose(${dose.id})">Delete</button>
+      </td>
     </tr>
   `).join('');
+}
+
+// ========== STATE MANAGEMENT ==========
+function updateMetabolism() {
+  const speed = metabolismSelect.value;
+  Object.assign(PK.ER, METABOLISM_PRESETS[speed].ER);
+  Object.assign(PK.IR, METABOLISM_PRESETS[speed].IR);
+  
+  pkParamsDisplay.textContent = 
+    `ER: Peak1=${PK.ER.peak1Time}h, Peak2=${PK.ER.peak2Time}h, t½=${PK.ER.halfLife}h | 
+     IR: Peak=${PK.IR.peakTime}h, t½=${PK.IR.halfLife}h`;
+  
+  updateChart();
 }
 
 function handleDoseUpdate(id) {
@@ -187,13 +213,14 @@ function handleDoseUpdate(id) {
 }
 
 function addNewDose() {
-  doses.push({
+  const newDose = {
     id: nextId++,
     type: "ER",
-    time: doses.length > 0 ? Math.max(...doses.map(d => d.time)) + 1 : 0, // Auto-increment time if doses exist
+    time: doses.length > 0 ? doses[doses.length-1].time + 1 : 0,
     amount: 10,
-    color: `hsl(${Math.random() * 360}, 70%, 60%)` // More visually distinct colors
-  });
+    color: `hsl(${Math.random() * 360}, 70%, 60%)`
+  };
+  doses.push(newDose);
   renderDosesList();
   updateChart();
 }
@@ -204,23 +231,6 @@ function deleteDose(id) {
   updateChart();
 }
 
-function updateMetabolism() {
-  const speed = metabolismSelect.value;
-  Object.assign(PK.ER, METABOLISM_PRESETS[speed].ER);
-  Object.assign(PK.IR, METABOLISM_PRESETS[speed].IR);
-  
-  pkParamsDisplay.textContent = 
-    `ER: t½=${PK.ER.halfLife}h | IR: t½=${PK.IR.halfLife}h`;
-  
-  updateChart();
-}
-
-// ======================
-// INITIALIZATION
-// ======================
-function init() {
-  updateMetabolism();
-  addNewDose(); // Start with one default dose
-}
-
-init();
+// ========== INITIALIZATION ==========
+updateMetabolism();
+addNewDose(); // Start with one default dose
