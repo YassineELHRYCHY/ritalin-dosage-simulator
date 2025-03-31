@@ -8,28 +8,24 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <h2>Ritalin Dosage Simulator</h2>
+  <h2>Ritalin Simulator</h2>
   
+  <div class="controls">
+    <label>Metabolism:
+      <select id="metabolismSpeed">
+        <option value="slow">Slow</option>
+        <option value="medium" selected>Medium</option>
+        <option value="fast">Fast</option>
+      </select>
+    </label>
+    <span id="pkParamsDisplay"></span>
+  </div>
+
   <div class="chart-container">
     <canvas id="ritalinChart"></canvas>
   </div>
 
-  <h3>Doses List</h3>
-  <table id="dosesTable">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Time (h)</th>
-        <th>Amount (mg)</th>
-        <th>Color</th>
-        <th class="actions">Actions</th>
-      </tr>
-    </thead>
-    <tbody id="dosesList"></tbody>
-  </table>
-
-  <button id="addDoseBtn">+ Add Dose</button>
-
+  <!-- Rest of your HTML remains the same -->
   <script src="script.js"></script>
 </body>
 </html>
