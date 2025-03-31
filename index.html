@@ -8,24 +8,45 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <h2>Ritalin Dosage Simulator</h2>
-  
-  <div class="controls">
-    <label>Metabolism:
-      <select id="metabolismSpeed">
-        <option value="slow">Slow</option>
-        <option value="medium" selected>Medium</option>
-        <option value="fast">Fast</option>
-      </select>
-    </label>
-    <span id="pkParamsDisplay"></span>
+  <div class="container">
+    <h1>Ritalin Dosage Simulator</h1>
+    
+    <div class="controls">
+      <div class="metabolism-control">
+        <label>Metabolism Speed:
+          <select id="metabolismSpeed">
+            <option value="slow">Slow</option>
+            <option value="medium" selected>Medium</option>
+            <option value="fast">Fast</option>
+          </select>
+        </label>
+        <div id="pkParamsDisplay" class="params-display"></div>
+      </div>
+      
+      <button id="addDoseBtn" class="primary-btn">+ Add Dose</button>
+    </div>
+
+    <div class="chart-container">
+      <canvas id="ritalinChart"></canvas>
+    </div>
+
+    <div class="dose-table-container">
+      <h3>Doses List</h3>
+      <table id="dosesTable">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Time (h)</th>
+            <th>Amount (mg)</th>
+            <th>Color</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="dosesList"></tbody>
+      </table>
+    </div>
   </div>
 
-  <div class="chart-container">
-    <canvas id="ritalinChart"></canvas>
-  </div>
-
-  <!-- Rest of your HTML remains the same -->
   <script src="script.js"></script>
 </body>
 </html>
