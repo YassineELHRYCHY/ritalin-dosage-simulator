@@ -3,70 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ritalin Simulator (ER + IR)</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Ritalin Simulator (Editable Table)</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <div class="app-container">
-    <h1>Ritalin Simulator (ER + IR Doses)</h1>
-    
-    <div class="controls">
-      <div class="metabolism-controls">
-        <h3>Metabolism Settings</h3>
-        <label>Speed: 
-          <select id="metabolismSpeed">
-            <option value="slow">Slow</option>
-            <option value="medium" selected>Medium</option>
-            <option value="fast">Fast</option>
-          </select>
-        </label>
-        <div id="pkParamsDisplay" class="pk-params"></div>
-      </div>
-
-      <div class="dose-controls">
-        <h3>Add/Edit Dose</h3>
-        <div class="input-group">
-          <label>Type: 
-            <select id="doseType">
-              <option value="ER">Extended-Release (ER)</option>
-              <option value="IR">Instant-Release (IR)</option>
-            </select>
-          </label>
-          <label>Time (hours): <input type="number" id="doseTime" step="0.5" min="0" value="0"></label>
-        </div>
-        <div class="input-group">
-          <label>Amount (mg): <input type="number" id="doseAmount" min="1" value="10"></label>
-          <label>Color: <input type="color" id="doseColor" value="#FF6384"></label>
-        </div>
-        <div class="button-group">
-          <button id="addDoseBtn">Add/Update Dose</button>
-          <button id="clearDosesBtn">Clear All</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="chart-container">
-      <canvas id="ritalinChart"></canvas>
-    </div>
-
-    <div class="doses-table">
-      <h3>Doses List</h3>
-      <table id="dosesTable">
-        <thead>
-          <tr>
-            <th class="type-col">Type</th>
-            <th class="time-col">Time (h)</th>
-            <th class="amount-col">Amount (mg)</th>
-            <th class="color-col">Color</th>
-            <th class="actions-col">Actions</th>
-          </tr>
-        </thead>
-        <tbody id="dosesList"></tbody>
-      </table>
-    </div>
+  <h2>Ritalin Simulator (Live Editable Table)</h2>
+  
+  <div class="chart-container">
+    <canvas id="ritalinChart"></canvas>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <h3>Doses List</h3>
+  <table id="dosesTable">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Time (h)</th>
+        <th>Amount (mg)</th>
+        <th>Color</th>
+        <th class="actions">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="dosesList"></tbody>
+  </table>
+
+  <button id="addDoseBtn">+ Add Dose</button>
+
   <script src="script.js"></script>
 </body>
 </html>
