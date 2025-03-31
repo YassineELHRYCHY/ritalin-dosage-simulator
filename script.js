@@ -128,4 +128,36 @@ function renderDosesList() {
 
 function updateDose(id) {
   const row = document.querySelector(`tr[data-id="${id}"]`);
-  const doseIndex = doses.findIndex(d => d.id
+  const doseIndex = doses.findIndex(d => d.id === id);
+  
+  doses[doseIndex] = {
+    id,
+    type: row.querySelector('.edit-type').value,
+    time: parseFloat(row.querySelector('.edit-time').value),
+    amount: parseFloat(row.querySelector('.edit-amount').value),
+    color: row.querySelector('.edit-color').value
+  };
+  
+  updateChart();
+}
+
+function addNewDose() {
+  doses.push({
+    id: nextId++,
+    type: "ER",
+    time: 0,
+    amount: 10,
+    color: "#" + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')
+  });
+  renderDosesList();
+  updateChart();
+}
+
+function deleteDose(id) {
+  doses = doses.filter(d => d.id !== id);
+  renderDosesList();
+  updateChart();
+}
+
+// Initialize
+addNewDose();
